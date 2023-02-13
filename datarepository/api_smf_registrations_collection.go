@@ -10,15 +10,15 @@
 package datarepository
 
 import (
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 
-	"github.com/free5gc/http_wrapper"
-	"github.com/free5gc/openapi"
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/udr/logger"
-	"github.com/free5gc/udr/producer"
+	"github.com/nycu-ucr/http_wrapper"
+	"github.com/nycu-ucr/openapi"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/udr/logger"
+	"github.com/nycu-ucr/udr/producer"
 )
 
 // HTTPQuerySmfRegList - Retrieves the SMF registration list of a UE

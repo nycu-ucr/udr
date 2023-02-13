@@ -6,10 +6,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/context"
-	"github.com/free5gc/udr/factory"
-	"github.com/free5gc/udr/logger"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/context"
+	"github.com/nycu-ucr/udr/factory"
+	"github.com/nycu-ucr/udr/logger"
 )
 
 func InitUdrContext(context *udr_context.UDRContext) {

@@ -3,16 +3,17 @@ package consumer
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
-	"github.com/free5gc/openapi"
-	"github.com/free5gc/openapi/Nnrf_NFManagement"
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/context"
-	"github.com/free5gc/udr/factory"
-	"github.com/free5gc/udr/logger"
+	"github.com/nycu-ucr/gonet/http"
+
+	"github.com/nycu-ucr/openapi"
+	"github.com/nycu-ucr/openapi/Nnrf_NFManagement"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/context"
+	"github.com/nycu-ucr/udr/factory"
+	"github.com/nycu-ucr/udr/logger"
 )
 
 func BuildNFInstance(context *udr_context.UDRContext) models.NfProfile {

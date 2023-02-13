@@ -15,17 +15,17 @@ import (
 
 	"github.com/free5gc/MongoDBLibrary"
 	mongoDBLibLogger "github.com/free5gc/MongoDBLibrary/logger"
-	"github.com/free5gc/http2_util"
-	"github.com/free5gc/logger_util"
-	openApiLogger "github.com/free5gc/openapi/logger"
 	"github.com/free5gc/path_util"
 	pathUtilLogger "github.com/free5gc/path_util/logger"
-	"github.com/free5gc/udr/consumer"
-	udr_context "github.com/free5gc/udr/context"
-	"github.com/free5gc/udr/datarepository"
-	"github.com/free5gc/udr/factory"
-	"github.com/free5gc/udr/logger"
-	"github.com/free5gc/udr/util"
+	"github.com/nycu-ucr/http2_util"
+	"github.com/nycu-ucr/logger_util"
+	openApiLogger "github.com/nycu-ucr/openapi/logger"
+	"github.com/nycu-ucr/udr/consumer"
+	udr_context "github.com/nycu-ucr/udr/context"
+	"github.com/nycu-ucr/udr/datarepository"
+	"github.com/nycu-ucr/udr/factory"
+	"github.com/nycu-ucr/udr/logger"
+	"github.com/nycu-ucr/udr/util"
 )
 
 type UDR struct{}

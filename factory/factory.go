@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/free5gc/udr/logger"
+	"github.com/nycu-ucr/udr/logger"
 )
 
 var UdrConfig Config

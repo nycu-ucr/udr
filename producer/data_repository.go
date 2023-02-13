@@ -3,10 +3,11 @@ package producer
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/nycu-ucr/gonet/http"
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/mitchellh/mapstructure"
@@ -14,11 +15,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/free5gc/MongoDBLibrary"
-	"github.com/free5gc/http_wrapper"
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/context"
-	"github.com/free5gc/udr/logger"
-	"github.com/free5gc/udr/util"
+	"github.com/nycu-ucr/http_wrapper"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/context"
+	"github.com/nycu-ucr/udr/logger"
+	"github.com/nycu-ucr/udr/util"
 )
 
 const (

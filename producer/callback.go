@@ -1,8 +1,8 @@
 package producer
 
 import (
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/udr/producer/callback"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/udr/producer/callback"
 )
 
 func PreHandleOnDataChangeNotify(ueId string, resourceId string, patchItems []models.PatchItem,
