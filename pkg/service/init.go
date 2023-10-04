@@ -15,9 +15,9 @@ import (
 	"github.com/free5gc/udr/internal/sbi/consumer"
 	"github.com/free5gc/udr/internal/sbi/datarepository"
 	"github.com/free5gc/udr/pkg/factory"
-	"github.com/free5gc/util/httpwrapper"
-	logger_util "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/mongoapi"
+	"github.com/nycu-ucr/util/httpwrapper"
+	logger_util "github.com/nycu-ucr/util/logger"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 type UdrApp struct {

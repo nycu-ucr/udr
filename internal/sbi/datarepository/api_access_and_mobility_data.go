@@ -10,9 +10,9 @@
 package datarepository
 
 import (
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 )
 
 // CreateAccessAndMobilityData - Creates and updates the access and mobility exposure data for a UE

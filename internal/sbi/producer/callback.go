@@ -3,7 +3,7 @@ package producer
 import (
 	"fmt"
 
-	"github.com/free5gc/openapi/models"
+	"github.com/nycu-ucr/openapi/models"
 	udr_context "github.com/free5gc/udr/internal/context"
 	"github.com/free5gc/udr/internal/sbi/producer/callback"
 )

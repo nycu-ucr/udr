@@ -2,19 +2,19 @@ package datarepository_test
 
 import (
 	"context"
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 	"github.com/stretchr/testify/require"
 
 	"github.com/free5gc/udr/internal/logger"
 	"github.com/free5gc/udr/internal/sbi/datarepository"
 	"github.com/free5gc/udr/internal/sbi/producer"
 	"github.com/free5gc/udr/pkg/factory"
-	util_logger "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/mongoapi"
+	util_logger "github.com/nycu-ucr/util/logger"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 func setupHttpServer() *gin.Engine {
