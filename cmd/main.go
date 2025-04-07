@@ -1,17 +1,20 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime/debug"
+	"syscall"
 
 	"github.com/urfave/cli"
 
 	"github.com/free5gc/udr/internal/logger"
 	"github.com/free5gc/udr/pkg/factory"
 	"github.com/free5gc/udr/pkg/service"
-	logger_util "github.com/nycu-ucr/util/logger"
-	"github.com/nycu-ucr/util/version"
+	logger_util "github.com/free5gc/util/logger"
+	"github.com/free5gc/util/version"
 )
 
 var UDR *service.UdrApp
@@ -50,18 +53,27 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	logger.MainLog.Infoln("UDR version: ", version.GetVersion())
+	ctx, cancel := context.WithCancel(context.Background())
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-sigCh
+		cancel()
+	}()
+
 	cfg, err := factory.ReadConfig(cliCtx.String("config"))
 	if err != nil {
 		return err
 	}
 	factory.UdrConfig = cfg
-	udr, err := service.NewApp(cfg)
+	udr, err := service.NewApp(ctx, cfg, tlsKeyLogPath)
 	if err != nil {
 		return err
 	}
 	UDR = udr
 
-	udr.Start(tlsKeyLogPath)
+	udr.Start()
 
 	return nil
 }

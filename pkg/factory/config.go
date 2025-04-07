@@ -22,8 +22,12 @@ const (
 	UdrSbiDefaultPort        = 8000
 	UdrSbiDefaultScheme      = "https"
 	UdrDefaultNrfUri         = "https://127.0.0.10:8000"
-	UdrDrResUriPrefix        = "/nudr-dr/v1"
+	UdrDrResUriPrefix        = "/nudr-dr/v2"
+	UdrGroupIdResUriPrefix   = "/nudr-group-id-map/v1"
+	HSSIsmSDMUriPrefix       = "/nhss-ims-sdm/v1"
 )
+
+type DbType string
 
 type Config struct {
 	Info          *Info          `yaml:"info" valid:"required"`
@@ -44,7 +48,7 @@ func (c *Config) Validate() (bool, error) {
 }
 
 type Info struct {
-	Version     string `yaml:"version,omitempty" valid:"required,in(1.0.2)"`
+	Version     string `yaml:"version,omitempty" valid:"required,in(1.1.0)"`
 	Description string `yaml:"description,omitempty" valid:"type(string),optional"`
 }
 
@@ -55,9 +59,11 @@ const (
 )
 
 type Configuration struct {
-	Sbi     *Sbi     `yaml:"sbi" valid:"required"`
-	Mongodb *Mongodb `yaml:"mongodb" valid:"required"`
-	NrfUri  string   `yaml:"nrfUri" valid:"url,required"`
+	Sbi             *Sbi     `yaml:"sbi" valid:"required"`
+	DbConnectorType DbType   `yaml:"dbConnectorType" valid:"required,in(mongodb)"`
+	Mongodb         *Mongodb `yaml:"mongodb" valid:"optional"`
+	NrfUri          string   `yaml:"nrfUri" valid:"url,required"`
+	NrfCertPem      string   `yaml:"nrfCertPem,omitempty" valid:"optional"`
 }
 
 type Logger struct {
@@ -109,8 +115,8 @@ func appendInvalid(err error) error {
 }
 
 func (c *Config) GetVersion() string {
-	c.RLock()
-	defer c.RUnlock()
+	c.RWMutex.RLock()
+	defer c.RWMutex.RUnlock()
 
 	if c.Info.Version != "" {
 		return c.Info.Version
@@ -119,8 +125,8 @@ func (c *Config) GetVersion() string {
 }
 
 func (c *Config) SetLogEnable(enable bool) {
-	c.Lock()
-	defer c.Unlock()
+	c.RWMutex.Lock()
+	defer c.RWMutex.Unlock()
 
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
@@ -134,8 +140,8 @@ func (c *Config) SetLogEnable(enable bool) {
 }
 
 func (c *Config) SetLogLevel(level string) {
-	c.Lock()
-	defer c.Unlock()
+	c.RWMutex.Lock()
+	defer c.RWMutex.Unlock()
 
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
@@ -148,8 +154,8 @@ func (c *Config) SetLogLevel(level string) {
 }
 
 func (c *Config) SetLogReportCaller(reportCaller bool) {
-	c.Lock()
-	defer c.Unlock()
+	c.RWMutex.Lock()
+	defer c.RWMutex.Unlock()
 
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
@@ -163,8 +169,8 @@ func (c *Config) SetLogReportCaller(reportCaller bool) {
 }
 
 func (c *Config) GetLogEnable() bool {
-	c.RLock()
-	defer c.RUnlock()
+	c.RWMutex.RLock()
+	defer c.RWMutex.RUnlock()
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
 		return false
@@ -173,8 +179,8 @@ func (c *Config) GetLogEnable() bool {
 }
 
 func (c *Config) GetLogLevel() string {
-	c.RLock()
-	defer c.RUnlock()
+	c.RWMutex.RLock()
+	defer c.RWMutex.RUnlock()
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
 		return "info"
@@ -183,11 +189,23 @@ func (c *Config) GetLogLevel() string {
 }
 
 func (c *Config) GetLogReportCaller() bool {
-	c.RLock()
-	defer c.RUnlock()
+	c.RWMutex.RLock()
+	defer c.RWMutex.RUnlock()
 	if c.Logger == nil {
 		logger.CfgLog.Warnf("Logger should not be nil")
 		return false
 	}
 	return c.Logger.ReportCaller
+}
+
+func (c *Config) GetCertPemPath() string {
+	c.RLock()
+	defer c.RUnlock()
+	return c.Configuration.Sbi.Tls.Pem
+}
+
+func (c *Config) GetCertKeyPath() string {
+	c.RLock()
+	defer c.RUnlock()
+	return c.Configuration.Sbi.Tls.Key
 }

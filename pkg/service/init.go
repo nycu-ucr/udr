@@ -1,52 +1,95 @@
 package service
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
-	"os/signal"
 	"runtime/debug"
-	"syscall"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/free5gc/openapi"
+	"github.com/free5gc/openapi/nrf/NFManagement"
 	udr_context "github.com/free5gc/udr/internal/context"
 	"github.com/free5gc/udr/internal/logger"
+	"github.com/free5gc/udr/internal/sbi"
 	"github.com/free5gc/udr/internal/sbi/consumer"
-	"github.com/free5gc/udr/internal/sbi/datarepository"
+	"github.com/free5gc/udr/internal/sbi/processor"
+	"github.com/free5gc/udr/pkg/app"
 	"github.com/free5gc/udr/pkg/factory"
-	"github.com/nycu-ucr/util/httpwrapper"
-	logger_util "github.com/nycu-ucr/util/logger"
-	"github.com/nycu-ucr/util/mongoapi"
+	"github.com/free5gc/util/mongoapi"
 )
 
 type UdrApp struct {
 	cfg    *factory.Config
 	udrCtx *udr_context.UDRContext
+
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	wg        sync.WaitGroup
+	sbiServer *sbi.Server
+	processor *processor.Processor
+	consumer  *consumer.Consumer
 }
 
-func NewApp(cfg *factory.Config) (*UdrApp, error) {
-	udr := &UdrApp{cfg: cfg}
+var _ app.App = &UdrApp{}
+
+func NewApp(ctx context.Context, cfg *factory.Config, tlsKeyLogPath string) (*UdrApp, error) {
+	udr_context.Init()
+
+	udr := &UdrApp{
+		cfg:    cfg,
+		udrCtx: udr_context.GetSelf(),
+		wg:     sync.WaitGroup{},
+	}
+	udr.ctx, udr.cancel = context.WithCancel(ctx)
+
 	udr.SetLogEnable(cfg.GetLogEnable())
 	udr.SetLogLevel(cfg.GetLogLevel())
 	udr.SetReportCaller(cfg.GetLogReportCaller())
-	udr_context.Init()
-	udr.udrCtx = udr_context.GetSelf()
+
+	processor := processor.NewProcessor(udr)
+	udr.processor = processor
+
+	consumer := consumer.NewConsumer(udr)
+	udr.consumer = consumer
+
+	udr.sbiServer = sbi.NewServer(udr, tlsKeyLogPath)
+
 	return udr, nil
+}
+
+func (a *UdrApp) Consumer() *consumer.Consumer {
+	return a.consumer
+}
+
+func (a *UdrApp) Processor() *processor.Processor {
+	return a.processor
+}
+
+func (a *UdrApp) Config() *factory.Config {
+	return a.cfg
+}
+
+func (a *UdrApp) Context() *udr_context.UDRContext {
+	return a.udrCtx
 }
 
 func (a *UdrApp) SetLogEnable(enable bool) {
 	logger.MainLog.Infof("Log enable is set to [%v]", enable)
 	if enable && logger.Log.Out == os.Stderr {
 		return
-	} else if !enable && logger.Log.Out == ioutil.Discard {
+	} else if !enable && logger.Log.Out == io.Discard {
 		return
 	}
 	a.cfg.SetLogEnable(enable)
 	if enable {
 		logger.Log.SetOutput(os.Stderr)
 	} else {
-		logger.Log.SetOutput(ioutil.Discard)
+		logger.Log.SetOutput(io.Discard)
 	}
 }
 
@@ -73,8 +116,50 @@ func (a *UdrApp) SetReportCaller(reportCaller bool) {
 	logger.Log.SetReportCaller(reportCaller)
 }
 
-func (a *UdrApp) Start(tlsKeyLogPath string) {
+func (u *UdrApp) registerToNrf(ctx context.Context) error {
+	udrContext := u.udrCtx
+
+	nrfUri, nfId, err := u.consumer.SendRegisterNFInstance(ctx, udrContext.NrfUri)
+	if err != nil {
+		return fmt.Errorf("send register NFInstance error[%s]", err.Error())
+	}
+	udrContext.NrfUri = nrfUri
+	udrContext.NfId = nfId
+
+	return nil
+}
+
+func (a *UdrApp) deregisterFromNrf() {
+	err := a.consumer.SendDeregisterNFInstance()
+	if err != nil {
+		switch apiErr := err.(type) {
+		case openapi.GenericOpenAPIError:
+			switch errModel := apiErr.Model().(type) {
+			case NFManagement.DeregisterNFInstanceError:
+				pd := &errModel.ProblemDetails
+				logger.InitLog.Errorf("Deregister NF instance Failed Problem[%+v]", pd)
+			case error:
+				logger.InitLog.Errorf("Deregister NF instance Error[%+v]", err)
+			}
+		case error:
+			logger.InitLog.Errorf("Deregister NF instance Error[%+v]", err)
+		}
+		logger.InitLog.Errorf("Deregister NF instance Error[%+v]", err)
+	}
+
+	logger.InitLog.Infof("Deregister from NRF successfully")
+}
+
+func (a *UdrApp) Start() {
+	err := a.registerToNrf(a.ctx)
+	if err != nil {
+		logger.InitLog.Errorf("register to NRF failed: %v", err)
+	} else {
+		logger.InitLog.Infof("register to NRF successfully")
+	}
+
 	// get config file info
+	logger.InitLog.Infoln("Server started")
 	config := factory.UdrConfig
 	mongodb := config.Configuration.Mongodb
 
@@ -82,85 +167,49 @@ func (a *UdrApp) Start(tlsKeyLogPath string) {
 
 	// Connect to MongoDB
 	if err := mongoapi.SetMongoDB(mongodb.Name, mongodb.Url); err != nil {
-		logger.InitLog.Errorf("UDR start err: %+v", err)
+		logger.InitLog.Errorf("UDR start set MongoDB error: %+v", err)
 		return
 	}
 
-	logger.InitLog.Infoln("Server started")
-
-	router := logger_util.NewGinWithLogrus(logger.GinLog)
-
-	datarepository.AddService(router)
-
-	pemPath := factory.UdrDefaultCertPemPath
-	keyPath := factory.UdrDefaultPrivateKeyPath
-	sbi := config.Configuration.Sbi
-	if sbi.Tls != nil {
-		pemPath = sbi.Tls.Pem
-		keyPath = sbi.Tls.Key
-	}
-
-	self := a.udrCtx
-	udr_context.InitUdrContext(self)
-
-	addr := fmt.Sprintf("%s:%d", self.BindingIPv4, self.SBIPort)
-	profile := consumer.BuildNFInstance(self)
-	var newNrfUri string
-	var err error
-	newNrfUri, self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, profile.NfInstanceId, profile)
-	if err == nil {
-		self.NrfUri = newNrfUri
-	} else {
-		logger.InitLog.Errorf("Send Register NFInstance Error[%s]", err.Error())
-	}
-
-	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		defer func() {
-			if p := recover(); p != nil {
-				// Print stack for panic to log. Fatalf() will let program exit.
-				logger.InitLog.Fatalf("panic: %v\n%s", p, string(debug.Stack()))
-			}
-		}()
-
-		<-signalChannel
-		a.Terminate()
-		os.Exit(0)
+	// Graceful deregister when panic
+	defer func() {
+		if p := recover(); p != nil {
+			logger.InitLog.Errorf("panic: %v\n%s", p, string(debug.Stack()))
+			a.deregisterFromNrf()
+		}
 	}()
 
-	server, err := httpwrapper.NewHttp2Server(addr, tlsKeyLogPath, router)
-	if server == nil {
-		logger.InitLog.Errorf("Initialize HTTP server failed: %+v", err)
-		return
-	}
+	a.wg.Add(1)
+	go a.listenShutdown(a.ctx)
 
-	if err != nil {
-		logger.InitLog.Warnf("Initialize HTTP server: %+v", err)
-	}
+	a.sbiServer.Run(&a.wg)
+	a.WaitRoutineStopped()
+}
 
-	serverScheme := factory.UdrConfig.Configuration.Sbi.Scheme
-	if serverScheme == "http" {
-		err = server.ListenAndServe()
-	} else if serverScheme == "https" {
-		err = server.ListenAndServeTLS(pemPath, keyPath)
-	}
+func (a *UdrApp) listenShutdown(ctx context.Context) {
+	defer a.wg.Done()
 
-	if err != nil {
-		logger.InitLog.Fatalf("HTTP server setup failed: %+v", err)
-	}
+	<-ctx.Done()
+	a.terminateProcedure()
 }
 
 func (a *UdrApp) Terminate() {
-	logger.InitLog.Infof("Terminating UDR...")
-	// deregister with NRF
-	problemDetails, err := consumer.SendDeregisterNFInstance()
-	if problemDetails != nil {
-		logger.InitLog.Errorf("Deregister NF instance Failed Problem[%+v]", problemDetails)
-	} else if err != nil {
-		logger.InitLog.Errorf("Deregister NF instance Error[%+v]", err)
-	} else {
-		logger.InitLog.Infof("Deregister from NRF successfully")
+	a.cancel()
+}
+
+func (a *UdrApp) terminateProcedure() {
+	logger.MainLog.Infof("Terminating UDR...")
+	a.CallServerStop()
+	a.deregisterFromNrf()
+}
+
+func (a *UdrApp) CallServerStop() {
+	if a.sbiServer != nil {
+		a.sbiServer.Shutdown()
 	}
-	logger.InitLog.Infof("UDR terminated")
+}
+
+func (a *UdrApp) WaitRoutineStopped() {
+	a.wg.Wait()
+	logger.MainLog.Infof("UDR terminated")
 }

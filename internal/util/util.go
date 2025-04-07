@@ -1,9 +1,17 @@
 package util
 
 import (
-	"github.com/nycu-ucr/gonet/http"
+	"net/http"
 
-	"github.com/nycu-ucr/openapi/models"
+	"github.com/free5gc/openapi/models"
+)
+
+// Title in ProblemDetails for UDR HTTP APIs
+const (
+	INVALID_REQUEST       = "Invalid request message framing"
+	MALFORMED_REQUEST     = "Malformed request syntax"
+	UNAUTHORIZED_CONSUMER = "Unauthorized NF service consumer"
+	UNSUPPORTED_RESOURCE  = "Unsupported request resources"
 )
 
 func ProblemDetailsSystemFailure(detail string) *models.ProblemDetails {
