@@ -11,15 +11,15 @@ package processor
 
 import (
 	"encoding/json"
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/util"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/util"
 )
 
 func (p *Processor) ModifyAmfSubscriptionInfoProcedure(c *gin.Context, ueId string, subsId string,

@@ -12,10 +12,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/openapi/oauth"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/pkg/factory"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/openapi/oauth"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/pkg/factory"
 )
 
 var udrContext = UDRContext{}

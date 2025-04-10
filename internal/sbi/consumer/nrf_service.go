@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/openapi/nrf/NFDiscovery"
-	"github.com/free5gc/openapi/nrf/NFManagement"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/logger"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/openapi/nrf/NFDiscovery"
+	"github.com/nycu-ucr/openapi/nrf/NFManagement"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/logger"
 )
 
 type NrfService struct {

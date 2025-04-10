@@ -11,14 +11,14 @@ package processor
 
 import (
 	"fmt"
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/util"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/util"
 )
 
 func (p *Processor) CreateSdmSubscriptionsProcedure(c *gin.Context, SdmSubscription models.SdmSubscription,

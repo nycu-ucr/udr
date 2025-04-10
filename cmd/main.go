@@ -10,11 +10,11 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/pkg/factory"
-	"github.com/free5gc/udr/pkg/service"
-	logger_util "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/version"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/pkg/factory"
+	"github.com/nycu-ucr/udr/pkg/service"
+	logger_util "github.com/nycu-ucr/util/logger"
+	"github.com/nycu-ucr/util/version"
 )
 
 var UDR *service.UdrApp

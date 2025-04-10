@@ -5,12 +5,12 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/free5gc/openapi"
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/util"
-	"github.com/free5gc/udr/pkg/factory"
-	"github.com/free5gc/util/mongoapi"
+	"github.com/nycu-ucr/openapi"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/util"
+	"github.com/nycu-ucr/udr/pkg/factory"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 type MongoDbConnector struct {

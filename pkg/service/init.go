@@ -10,16 +10,16 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/free5gc/openapi"
-	"github.com/free5gc/openapi/nrf/NFManagement"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/sbi"
-	"github.com/free5gc/udr/internal/sbi/consumer"
-	"github.com/free5gc/udr/internal/sbi/processor"
-	"github.com/free5gc/udr/pkg/app"
-	"github.com/free5gc/udr/pkg/factory"
-	"github.com/free5gc/util/mongoapi"
+	"github.com/nycu-ucr/openapi"
+	"github.com/nycu-ucr/openapi/nrf/NFManagement"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/sbi"
+	"github.com/nycu-ucr/udr/internal/sbi/consumer"
+	"github.com/nycu-ucr/udr/internal/sbi/processor"
+	"github.com/nycu-ucr/udr/pkg/app"
+	"github.com/nycu-ucr/udr/pkg/factory"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 type UdrApp struct {

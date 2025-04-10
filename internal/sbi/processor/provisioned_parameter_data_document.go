@@ -10,14 +10,14 @@
 package processor
 
 import (
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/util"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/util"
 )
 
 func (p *Processor) ModifyPpDataProcedure(c *gin.Context, collName string, ueId string, patchItem []models.PatchItem) {

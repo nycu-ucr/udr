@@ -12,15 +12,15 @@ package processor
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
+	"github.com/nycu-ucr/gonet/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/nycu-ucr/gin"
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/free5gc/openapi/models"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/util/mongoapi"
+	"github.com/nycu-ucr/openapi/models"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 func (p *Processor) ApplicationDataInfluenceDataGetProcedure(c *gin.Context, collName string, filter []bson.M) (

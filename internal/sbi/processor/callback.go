@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/openapi/udr/DataRepository"
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/util"
+	"github.com/nycu-ucr/openapi/models"
+	"github.com/nycu-ucr/openapi/udr/DataRepository"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/util"
 )
 
 var CurrentResourceUri string

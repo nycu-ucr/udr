@@ -8,17 +8,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/nycu-ucr/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/free5gc/openapi/models"
-	db "github.com/free5gc/udr/internal/database"
-	"github.com/free5gc/udr/internal/logger"
-	"github.com/free5gc/udr/internal/sbi/processor"
-	"github.com/free5gc/udr/pkg/factory"
-	util_logger "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/mongoapi"
+	"github.com/nycu-ucr/openapi/models"
+	db "github.com/nycu-ucr/udr/internal/database"
+	"github.com/nycu-ucr/udr/internal/logger"
+	"github.com/nycu-ucr/udr/internal/sbi/processor"
+	"github.com/nycu-ucr/udr/pkg/factory"
+	util_logger "github.com/nycu-ucr/util/logger"
+	"github.com/nycu-ucr/util/mongoapi"
 )
 
 type testdata struct {

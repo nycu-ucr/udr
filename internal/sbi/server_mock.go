@@ -7,9 +7,9 @@ package sbi
 import (
 	reflect "reflect"
 
-	context "github.com/free5gc/udr/internal/context"
-	processor "github.com/free5gc/udr/internal/sbi/processor"
-	factory "github.com/free5gc/udr/pkg/factory"
+	context "github.com/nycu-ucr/udr/internal/context"
+	processor "github.com/nycu-ucr/udr/internal/sbi/processor"
+	factory "github.com/nycu-ucr/udr/pkg/factory"
 	gomock "github.com/golang/mock/gomock"
 )
 

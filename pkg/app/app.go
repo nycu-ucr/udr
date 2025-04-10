@@ -1,8 +1,8 @@
 package app
 
 import (
-	udr_context "github.com/free5gc/udr/internal/context"
-	"github.com/free5gc/udr/pkg/factory"
+	udr_context "github.com/nycu-ucr/udr/internal/context"
+	"github.com/nycu-ucr/udr/pkg/factory"
 )
 
 type App interface {
