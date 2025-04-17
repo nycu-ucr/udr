@@ -1,9 +1,11 @@
 package util
 
 import (
-	"net/http"
-	"net/http/httptest"
 	"testing"
+
+	"github.com/nycu-ucr/gonet/http/httptest"
+
+	"github.com/nycu-ucr/gonet/http"
 
 	"github.com/nycu-ucr/gin"
 	"github.com/pkg/errors"

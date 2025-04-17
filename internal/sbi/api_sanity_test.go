@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"testing"
+
+	"github.com/nycu-ucr/gonet/http"
+	"github.com/nycu-ucr/gonet/http/httptest"
 
 	"github.com/golang/mock/gomock"
 	"github.com/nycu-ucr/gin"
